@@ -1,0 +1,25 @@
+# =============================================================================
+# Management: Ansible
+# Role:       atc-proxy
+# Type:       task (main)
+# Author:     awmyhr <awmyhr@gmail.com> (original: Shane McDonald <me@shanemcd.com>)
+# Revised:    2020-02-26
+# Created:    2020-02-26
+# Reference:  https://github.com/shanemcd/ansible-tower-vagrant-cluster/blob/master/provisioning/roles/haproxy/tasks/main.yml
+# =============================================================================
+---
+- name: Install haproxy
+  package:
+    name: haproxy
+    state: present
+
+- name: Install haproxy config
+  template:
+    src: etc_haproxy_haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: Start / restart haproxy
+  service:
+    name: haproxy
+    enabled: yes
+    state: restarted

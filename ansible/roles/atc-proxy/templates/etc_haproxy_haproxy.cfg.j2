@@ -1,0 +1,73 @@
+# =============================================================================
+# {{ ansible_managed }}
+# Role:       atc-proxy
+# Type:       task (main)
+# Author:     awmyhr <awmyhr@gmail.com> (original: Shane McDonald <me@shanemcd.com>)
+# Revised:    2020-02-26
+# Created:    2020-02-26
+# Reference:  https://github.com/shanemcd/ansible-tower-vagrant-cluster/blob/master/provisioning/roles/haproxy/templates/haproxy.cfg.j2
+# =============================================================================
+
+global
+    debug
+    stats socket /tmp/admin.sock
+    stats timeout 30s
+
+defaults
+    log     global
+    mode    http
+    option  dontlognull
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+frontend localnodes
+    bind *:80
+    mode http
+    default_backend nodes
+
+frontend localnodes_ssl
+    bind *:443
+    mode tcp
+    default_backend nodes_ssl
+
+frontend rabbitctl
+    bind *:5672
+    mode http
+    default_backend rabbitctl_nodes
+
+backend nodes
+    mode http
+    balance roundrobin
+    option forwardfor
+    option http-pretend-keepalive
+    http-request set-header X-Forwarded-Port %[dst_port]
+    http-request add-header X-Forwarded-Proto https if { ssl_fc }
+    option httpchk HEAD / HTTP/1.1\r\nHost:localhost
+{% for host in groups['tower'] %}
+    server {{ host }} {{ host }}:80/api/v2/ping/ check
+{% endfor %}
+
+backend nodes_ssl
+    mode tcp
+    balance roundrobin
+{% for host in groups['tower'] %}
+    server {{ host }} {{ host }}:443 check
+{% endfor %}
+
+backend rabbitctl_nodes
+    mode http
+    balance roundrobin
+    option forwardfor
+    option http-pretend-keepalive
+    http-request set-header X-Forwarded-Port %[dst_port]
+    http-request add-header X-Forwarded-Proto https if { ssl_fc }
+    #option httpchk HEAD / HTTP/1.1\r\nHost:localhost
+{% for host in groups['tower'] %}
+    server {{ host }} {{ host }}:5672
+{% endfor %}
+
+listen stats
+    bind *:1936
+    stats enable
+    stats uri /
