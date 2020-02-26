@@ -1,0 +1,14 @@
+{
+  "projectrc_version": '1.0.0',
+  "contact_email": 'awmyhr@gmail.com',
+  "contact_name": 'awmyhr',
+  "email": 'awmyhr@gmail.com',
+  "full_name": 'awmyhr',
+  "project_home": 'https://github.com/awmyhr/vagrant-ansible_tower_cluster',
+  "project_name": 'Vagrant - Ansible Tower Cluster',
+  "project_slug": 'vagrant-ansible_tower_cluster',
+  "project_abbr": 'v-atc',
+  "project_version": '2020-02-26',
+  "software_copyright": '2020 awmyhr',
+  "software_license": 'Apache-2.0'
+}
