@@ -2,7 +2,7 @@
 # gitignore [https://git-scm.com/docs/gitignore]
 #------------------------------------------------------------------------------
 # Author:     awmyhr <awmyhr@gmail.com>
-# Revised:    2018-07-20
+# Revised:    20200226-134323
 # Created:    2016-09-11
 #==============================================================================
 #-- Application/OS-specific files to ignore
@@ -10,6 +10,7 @@
 *.retry
 .DS_Store
 .ansible/**
+.vagrant/**
 .directory
 .kdev4
 .user
