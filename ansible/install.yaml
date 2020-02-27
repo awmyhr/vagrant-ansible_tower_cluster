@@ -1,4 +1,4 @@
-# =============================================================================
+# ==============================================================================
 # Management: Ansible
 # Role:       install
 # Type:       playbook
@@ -6,33 +6,51 @@
 # Revised:    2020-02-27
 # Created:    2020-02-27
 # Reference:  https://github.com/shanemcd/ansible-tower-vagrant-cluster
-# =============================================================================
+# ==============================================================================
 ---
+#-------------------------------------------------------------------------------
+- name: Global setup
+  hosts: all
+  become: true
+  tasks:
+    - name: Populate /etc/hosts
+      lineinfile:
+        dest: /etc/hosts
+        regexp: '.*{{ item }}$'
+        line: "{{ hostvars[item].ansible_default_ipv4.address }} {{item}}"
+        state: present
+      when: hostvars[item].ansible_default_ipv4.address is defined
+      with_items: "{{ groups['all'] }}"
 
-- name: Set up proxy
+#-------------------------------------------------------------------------------
+- name: Proxy setup
   hosts: haproxy
-  become: yes
+  become: true
   roles:
     - haproxy
 
-- name: Bootstrap
-  hosts: all
-  become: yes
+#-------------------------------------------------------------------------------
+- name: Cluster setup
+  hosts:
+    - tower
+    - database
+  become: true
   tasks:
     - name: Enable scl repo
       yum:
         name: centos-release-scl
         state: installed
 
-- name: Tower install
+#-------------------------------------------------------------------------------
+- name: Cluster Tower install
   hosts: localhost
   tasks:
-    - name: Remove previously extracted files
+    - name: Remove previous installer
       file:
         path: "{{ playbook_dir }}/setup"
         state: absent
 
-    - name: Download installer
+    - name: Download installer archive
       get_url:
         url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
         dest: "{{ playbook_dir }}"
@@ -41,5 +59,21 @@
 
     - name: Unarchive installer
       unarchive:
-        source: "{{ playbook_dir }}/ansible-tower-setup-latest.tar.gz"
+        src: "{{ playbook_dir }}/ansible-tower-setup-latest.tar.gz"
         dest: "{{ playbook_dir }}"
+        extra_opts:
+          - --transform
+          - s|^[^/]*|setup|
+
+    - name: Run installer
+      command: |
+        ./setup.sh \
+            -i {{ inventory_path }} \
+            -e pg_host={{ pg_host }} \
+            -e @{{ playbook_dir }}/group_vars/all.yaml
+      args:
+        chdir: "{{ playbook_dir }}/setup"
+      environment:
+        ANSIBLE_BECOME: 'True'
+        ANSIBLE_BECOME_METHOD: 'sudo'
+        ANSIBLE_HOST_KEY_CHECKING: 'False'

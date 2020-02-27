@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 #===============================================================================
-#-- Version     0.1.0-alpha
+#-- Version     1.0.0
 #-- Revised     20200227-100236
 #-- Contact     awmyhr <awmyhr@gmail.com>
 #===============================================================================
@@ -22,13 +22,13 @@ tower_nodes  = ENV.fetch('TOWER_NODES', 1).to_i
 hardware = {
     :box     => "centos/7",
     :version => "1905.1",
-    :ram     => 2096,
-    :cpu     => 1
+    :ram     => 4096,
+    :cpu     => 2
 }
 ansible_groups = {
-    tower: (1..tower_nodes).map { |i| "atc-node-#{i}.#{tower_domain}" },
-    database: ["atc-db.#{tower_domain}"],
-    haproxy: ["atc.#{tower_domain}"]
+    tower:     (1..tower_nodes).map { |i| "atc-node-#{i}.#{tower_domain}" },
+    database:  [ "atc-db.#{tower_domain}" ],
+    haproxy:   [ "atc.#{tower_domain}" ]
 }
 
 #-------------------------------------------------------------------------------
@@ -39,11 +39,12 @@ inventory_path = File.expand_path(inventory, File.dirname(__FILE__))
 #===============================================================================
 Vagrant.configure("2") do |config|
     #---------------------------------------------------------------------------
-    #-- Configure hardware -  Provider specific configs
+    #-- General configurations
     config.vm.box = hardware[:box]
     # config.vm.box_version = hardware[:version]
     config.vm.synced_folder ".", "/vagrant", id: "vagrant-root", disabled: true
-    # Provider specific configs
+
+    #-- Provider specific configs
     config.vm.provider :libvirt do |vmp|
         vmp.cpus   = hardware[:cpu]
         vmp.memory = hardware[:ram]
@@ -78,15 +79,17 @@ Vagrant.configure("2") do |config|
         # config.vm.network :private_network, ip: "192.168.220.50"
 
     #---------------------------------------------------------------------------
-    #-- Running ansible provisioning in last machine created to ensure all exist
+    #-- Running provisioning in last machine created to ensure vms all exist
     #---------------------------------------------------------------------------
         config.vm.provision 'install', type: 'ansible' do |ansible|
-            ansible.limit = 'all'
-            ansible.extra_vars = { pg_host: "atc-db.#{tower_domain}" }
-            ansible.host_vars = { "localhost" => { "connection" => "local" } }
-            ansible.groups = ansible_groups
-            ansible.playbook = 'ansible/install.yaml'
+            ansible.limit = 'all,localhost'
+            ansible.extra_vars = {
+                pg_host: "atc-db.#{tower_domain}",
+                inventory_path: inventory_path
+            }
+            ansible.host_vars  = { "localhost" => { "connection" => "local" } }
+            ansible.groups     = ansible_groups
+            ansible.playbook   = 'ansible/install.yaml'
         end
-
     end
 end

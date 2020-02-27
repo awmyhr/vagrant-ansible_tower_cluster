@@ -18,6 +18,7 @@ Thumbs.db
 **/test*.yml
 **/ansible/inventories/user**
 **/ansible/inventories/group_vars/user**
+**/ansible/setup/**
 #------------------------------------------------------------------------------
 #-- Compiled files and build artifacts
 #------------------------------------------------------------------------------
