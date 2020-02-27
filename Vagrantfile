@@ -82,6 +82,8 @@ Vagrant.configure("2") do |config|
     #---------------------------------------------------------------------------
         config.vm.provision 'install', type: 'ansible' do |ansible|
             ansible.limit = 'all'
+            ansible.extra_vars = { pg_host: "atc-db.#{tower_domain}" }
+            ansible.host_vars = { "localhost" => { "connection" => "local" } }
             ansible.groups = ansible_groups
             ansible.playbook = 'ansible/install.yaml'
         end

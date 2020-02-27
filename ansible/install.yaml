@@ -1,7 +1,7 @@
 # =============================================================================
 # Management: Ansible
 # Role:       install
-# Type:       -
+# Type:       playbook
 # Author:     awmyhr <awmyhr@gmail.com> (original: Shane McDonald <me@shanemcd.com>)
 # Revised:    2020-02-27
 # Created:    2020-02-27
@@ -19,7 +19,27 @@
   hosts: all
   become: yes
   tasks:
-    - name: Install epel repo
+    - name: Enable scl repo
       yum:
-        name: epel-release
+        name: centos-release-scl
         state: installed
+
+- name: Tower install
+  hosts: localhost
+  tasks:
+    - name: Remove previously extracted files
+      file:
+        path: "{{ playbook_dir }}/setup"
+        state: absent
+
+    - name: Download installer
+      get_url:
+        url: http://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+        dest: "{{ playbook_dir }}"
+        mode: 0640
+      register: tarball
+
+    - name: Unarchive installer
+      unarchive:
+        source: "{{ playbook_dir }}/ansible-tower-setup-latest.tar.gz"
+        dest: "{{ playbook_dir }}"

@@ -1,0 +1,29 @@
+# =============================================================================
+# Management: Ansible
+# Role:       install
+# Type:       group_vars
+# Author:     awmyhr <awmyhr@gmail.com>
+# Revised:    2020-02-27
+# Created:    2020-02-27
+# Reference:  https://www.ansible.com/blog/getting-started-installing-ansible-tower-cluster
+# =============================================================================
+---
+# ansible_become: true
+
+admin_password: 'password'
+
+# pg_host: 'dbnode.example.com'
+pg_port: '5432'
+
+pg_database: 'tower'
+pg_username: 'tower'
+pg_password: 'password'
+
+rabbitmq_port: 5672
+rabbitmq_vhost: tower
+rabbitmq_username: tower
+rabbitmq_password: tower
+rabbitmq_cookie=: rabbitmqcookie
+
+# Needs to be true for fqdns and ip addresses
+rabbitmq_use_long_name: true
