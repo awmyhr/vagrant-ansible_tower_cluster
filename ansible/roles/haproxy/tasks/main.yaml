@@ -1,6 +1,6 @@
 # =============================================================================
 # Management: Ansible
-# Role:       atc-proxy
+# Role:       haproxy
 # Type:       task (main)
 # Author:     awmyhr <awmyhr@gmail.com> (original: Shane McDonald <me@shanemcd.com>)
 # Revised:    2020-02-26

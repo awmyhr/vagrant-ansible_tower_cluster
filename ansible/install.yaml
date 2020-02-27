@@ -1,0 +1,25 @@
+# =============================================================================
+# Management: Ansible
+# Role:       install
+# Type:       -
+# Author:     awmyhr <awmyhr@gmail.com> (original: Shane McDonald <me@shanemcd.com>)
+# Revised:    2020-02-27
+# Created:    2020-02-27
+# Reference:  https://github.com/shanemcd/ansible-tower-vagrant-cluster
+# =============================================================================
+---
+
+- name: Set up proxy
+  hosts: haproxy
+  become: yes
+  roles:
+    - haproxy
+
+- name: Bootstrap
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install epel repo
+      yum:
+        name: epel-release
+        state: installed

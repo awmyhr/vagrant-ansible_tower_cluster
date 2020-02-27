@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 #===============================================================================
 #-- Version     0.1.0-alpha
-#-- Revised     20200226-140158
+#-- Revised     20200227-100236
 #-- Contact     awmyhr <awmyhr@gmail.com>
 #===============================================================================
 #-- Project Name        Vagrant - Ansible Tower Cluster
@@ -80,10 +80,10 @@ Vagrant.configure("2") do |config|
     #---------------------------------------------------------------------------
     #-- Running ansible provisioning in last machine created to ensure all exist
     #---------------------------------------------------------------------------
-        config.vm.provision 'haproxy', type: 'ansible' do |ansible|
-            ansible.limit = 'haproxy'
+        config.vm.provision 'install', type: 'ansible' do |ansible|
+            ansible.limit = 'all'
             ansible.groups = ansible_groups
-            ansible.playbook = 'ansible/atc-proxy.yaml'
+            ansible.playbook = 'ansible/install.yaml'
         end
 
     end
