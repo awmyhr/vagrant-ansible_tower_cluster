@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 #===============================================================================
 #-- Version     1.0.0
-#-- Revised     20200227-100236
+#-- Revised     20200227-152852
 #-- Contact     awmyhr <awmyhr@gmail.com>
 #===============================================================================
 #-- Project Name        Vagrant - Ansible Tower Cluster
@@ -20,7 +20,7 @@ tower_domain = ENV.fetch('TOWER_DOMAIN', 'atc-demo.net')
 tower_nodes  = ENV.fetch('TOWER_NODES', 1).to_i
 
 hardware = {
-    :box     => "centos/7",
+    :box     => "centos/8",
     :version => "1905.1",
     :ram     => 4096,
     :cpu     => 2
