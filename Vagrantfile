@@ -18,6 +18,8 @@
 #===============================================================================
 tower_domain = ENV.fetch('TOWER_DOMAIN', 'atc-demo.net')
 tower_nodes  = ENV.fetch('TOWER_NODES', 1).to_i
+tower_os     = ENV.fetch('TOWER_OS', 'centos')
+tower_osrel  = ENV.fetch('TOWER_OSREL', 7).to_i
 
 hardware = {
     :box     => "centos/8",

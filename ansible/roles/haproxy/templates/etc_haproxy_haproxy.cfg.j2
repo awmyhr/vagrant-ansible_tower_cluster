@@ -7,12 +7,22 @@
 # Created:    2020-02-26
 # Reference:  https://github.com/shanemcd/ansible-tower-vagrant-cluster/blob/master/provisioning/roles/haproxy/templates/haproxy.cfg.j2
 # =============================================================================
-
+# Global Settings
+#-------------------------------------------------------------------------------
 global
     debug
-    stats socket /tmp/admin.sock
+    chroot        /var/lib/haproxy
+    pidfile       /var/run/haproxy.pid
+    stats socket  /var/lib/haproxy/stats
     stats timeout 30s
+    user          haproxy
+    group         haproxy
+    daemon
 
+#-------------------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#-------------------------------------------------------------------------------
 defaults
     log     global
     mode    http
@@ -21,6 +31,7 @@ defaults
     timeout client  50000
     timeout server  50000
 
+#-------------------------------------------------------------------------------
 frontend localnodes
     bind *:80
     mode http
@@ -36,6 +47,7 @@ frontend rabbitctl
     mode http
     default_backend rabbitctl_nodes
 
+#-------------------------------------------------------------------------------
 backend nodes
     mode http
     balance roundrobin
@@ -67,6 +79,7 @@ backend rabbitctl_nodes
     server {{ host }} {{ host }}:5672
 {% endfor %}
 
+#-------------------------------------------------------------------------------
 listen stats
     bind *:1936
     stats enable

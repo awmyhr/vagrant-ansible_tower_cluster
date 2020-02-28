@@ -10,13 +10,22 @@
 ---
 - name: Install haproxy
   package:
-    name: haproxy
+    name:
+        - haproxy
+        - policycoreutils-python-utils
     state: present
+
+- name: Update selinux boolean
+  seboolean:
+    name: haproxy_connect_any
+    state: yes
+    persistent: yes
 
 - name: Install haproxy config
   template:
     src: etc_haproxy_haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg
+    backup: true
 
 - name: Start / restart haproxy
   service:
