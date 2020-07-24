@@ -1,7 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 #===============================================================================
-#-- Version     1.0.0
+#-- Version     1.0.1
 #-- Revised     20200227-152852
 #-- Contact     awmyhr <awmyhr@gmail.com>
 #===============================================================================
@@ -22,8 +22,7 @@ tower_os     = ENV.fetch('TOWER_OS', 'centos')
 tower_osrel  = ENV.fetch('TOWER_OSREL', 7).to_i
 
 hardware = {
-    :box     => "centos/8",
-    :version => "1905.1",
+    :box     => "#{tower_os}/#{tower_osrel}",
     :ram     => 4096,
     :cpu     => 2
 }
@@ -43,7 +42,7 @@ Vagrant.configure("2") do |config|
     #---------------------------------------------------------------------------
     #-- General configurations
     config.vm.box = hardware[:box]
-    # config.vm.box_version = hardware[:version]
+    # config.vm.box_version >= 0
     config.vm.synced_folder ".", "/vagrant", id: "vagrant-root", disabled: true
 
     #-- Provider specific configs

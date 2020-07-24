@@ -3,17 +3,22 @@
 # Role:       haproxy
 # Type:       task (main)
 # Author:     awmyhr <awmyhr@gmail.com> (original: Shane McDonald <me@shanemcd.com>)
-# Revised:    2020-02-26
+# Revised:    2020-07-24
 # Created:    2020-02-26
 # Reference:  https://github.com/shanemcd/ansible-tower-vagrant-cluster/blob/master/provisioning/roles/haproxy/tasks/main.yml
 # =============================================================================
 ---
-- name: Install haproxy
-  package:
-    name:
-        - haproxy
-        - policycoreutils-python-utils
+- name: Install haproxy (el7)
+  yum:
+    name: haproxy
     state: present
+  when: ansible_distribution_major_version == '7'
+
+- name: Install haproxy (el8)
+  dnf:
+    name: haproxy, policycoreutils-python-utils
+    state: present
+  when: ansible_distribution_major_version == '8'
 
 - name: Update selinux boolean
   seboolean:
